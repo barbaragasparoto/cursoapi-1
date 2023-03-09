@@ -1,0 +1,75 @@
+package br.com.etec.nara.cursoapi.model;
+
+import org.w3c.dom.ls.LSException;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+@Entity
+@Table (name = "aluno")
+public class Aluno {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    private Long id;
+
+    public Curso getCurso() {
+        return curso;
+    }
+
+    public void setCurso(Curso curso) {
+        this.curso = curso;
+    }
+
+    public Cidade getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(Cidade cidade) {
+        this.cidade = cidade;
+    }
+
+    private String nomealuno;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNomealuno() {
+        return nomealuno;
+    }
+
+    @ManyToOne
+    @JoinColumn (name="idcurso")
+    private Curso curso;
+
+    @ManyToOne
+    @JoinColumn (name="idcidade")
+    private Cidade cidade;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Aluno aluno = (Aluno) o;
+        return id.equals(aluno.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public void setNomealuno(String nomealuno) {
+        this.nomealuno = nomealuno;
+
+
+    }
+}
