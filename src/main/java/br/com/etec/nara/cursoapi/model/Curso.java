@@ -1,5 +1,7 @@
 package br.com.etec.nara.cursoapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +13,7 @@ public class Curso {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer idcurso;
 
     private String nomecurso;
 
@@ -23,16 +25,17 @@ public class Curso {
         this.alunocurso = alunocurso;
     }
 
+    @JsonIgnore
     @OneToMany(mappedBy = "curso")
     private List<Aluno> alunocurso = new ArrayList<>();
 
 
     public Integer getId() {
-        return id;
+        return idcurso;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.idcurso = id;
     }
 
     public String getNomecurso() {
@@ -48,11 +51,11 @@ public class Curso {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Curso curso = (Curso) o;
-        return id.equals(curso.id);
+        return idcurso.equals(curso.idcurso);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(idcurso);
     }
 }
