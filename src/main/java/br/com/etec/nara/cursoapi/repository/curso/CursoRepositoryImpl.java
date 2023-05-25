@@ -5,6 +5,7 @@ import br.com.etec.nara.cursoapi.model.Curso;
 import br.com.etec.nara.cursoapi.repository.filter.CursoFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Predicates;
 
@@ -36,9 +37,34 @@ public class CursoRepositoryImpl implements CursoRepositoryQuery {
         criteria.orderBy(builder.asc(root.get("nomecurso")));
 
         TypedQuery<Curso> query = manager.createQuery(criteria);
+        adicionarRestricoesDePaginacao(query, pageable);
 
+        return new PageImpl<>(query.getResultList(), pageable, total(cursoFilter));
+    }
 
-        return null;
+    private Long total(CursoFilter cursoFilter) {
+
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root<Curso> root = criteria.from(Curso.class);
+
+        Predicate[] predicates = criarRestricoes(cursoFilter, builder, root);
+        criteria.where(predicates);
+        criteria.orderBy(builder.asc(root.get("nomecurso")));
+
+        criteria.select(builder.count(root));
+
+        return manager.createQuery(criteria).getSingleResult();
+
+    }
+
+    private void adicionarRestricoesDePaginacao(TypedQuery<Curso> query, Pageable pageable) {
+        int paginaAtual = pageable.getPageNumber();
+        int totalRegistrosPorPagina = pageable.getPageSize();
+        int primeiroRegistroDaPagina = paginaAtual * totalRegistrosPorPagina;
+
+        query.setFirstResult(primeiroRegistroDaPagina);
+        query.setMaxResults(totalRegistrosPorPagina);
     }
 
     private Predicate[] criarRestricoes(CursoFilter cursoFilter, CriteriaBuilder builder, Root<Curso> root) {
